@@ -1,12 +1,6 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"net/http"
-	"os"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,28 +20,29 @@ type Product struct {
 	CreatedAt   string  `json:"createdAt"`
 }
 
-func readJsonFile(fileName string) Products {
-	jsonFile, err := os.Open(fileName)
-	if err != nil {
-		fmt.Println(err)
-	}
+// func readJsonFile(fileName string) Products {
 
-	defer jsonFile.Close()
+// 	jsonFile, err := os.Open(fileName)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
 
-	fileByteValues, _ := ioutil.ReadAll(jsonFile)
+// 	defer jsonFile.Close()
 
-	p := ParseObject(fileByteValues)
+// 	fileByteValues, _ := ioutil.ReadAll(jsonFile)
 
-	return p
-}
+// 	p := ParseObject(fileByteValues)
 
-func ParseObject(fileByteValues []byte) (p Products) {
+// 	return p
+// }
 
-	if err := json.Unmarshal(fileByteValues, &p); err != nil {
-		fmt.Printf("error:%v", err)
-	}
-	return p
-}
+// func ParseObject(fileByteValues []byte) (p Products) {
+
+// 	if err := json.Unmarshal(fileByteValues, &p); err != nil {
+// 		fmt.Printf("error:%v", err)
+// 	}
+// 	return p
+// }
 
 func helloHandler(c *gin.Context) {
 	c.JSON(200, gin.H{
@@ -56,7 +51,8 @@ func helloHandler(c *gin.Context) {
 }
 
 func GetAllHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, readJsonFile(FileName))
+	// c.JSON(http.StatusOK, readJsonFile(FileName))
+	c.File("./products.json")
 }
 
 func main() {
