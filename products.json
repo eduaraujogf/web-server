@@ -1,0 +1,33 @@
+{ "products":[
+    {
+        "id":10,
+        "name":"book",
+        "color":"black",
+        "price": 23.92,
+        "stock": 32,        
+        "code":"ABC123",
+        "isPublished":true,
+        "createdAt":"08/02/2022"
+    }, 
+    {
+        "id":1,
+        "name":"chair",
+        "color":"brown",
+        "price": 112.52,
+        "stock": 15, 
+        "code":"CBD422",
+        "isPublished":false,
+        "createdAt":"18/05/2021"
+    }, 
+    {
+        "id":5,
+        "name":"notebook",
+        "color":"white",
+        "price": 1999.0,
+        "stock": 40, 
+        "code":"GBA556",
+        "isPublished":true,
+        "createdAt":"25/10/2020"
+    }
+]
+}
