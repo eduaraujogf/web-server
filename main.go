@@ -10,43 +10,43 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const FileName = "products.json"
+
 type Products struct {
 	Products []Product `json:"products"`
 }
 type Product struct {
-	Id        uint    `json:"id"`
-	Name      string  `json:"name"`
-	Color     string  `json:"color"`
-	Price     float64 `json:"price"`
-	Stock     uint    `json:"stock"`
-	Code      string  `json:"code"`
-	Published bool    `json:"published"`
-	CreatedAt string  `json:"created-at"`
+	Id          uint    `json:"id"`
+	Name        string  `json:"name"`
+	Color       string  `json:"color"`
+	Price       float64 `json:"price"`
+	Stock       uint    `json:"stock"`
+	Code        string  `json:"code"`
+	IsPublished bool    `json:"isPublished"`
+	CreatedAt   string  `json:"createdAt"`
 }
 
-func readJsonFile() Products {
-	jsonFile, err := os.Open("products.json")
+func readJsonFile(fileName string) Products {
+	jsonFile, err := os.Open(fileName)
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	defer jsonFile.Close()
 
-	byteValues, _ := ioutil.ReadAll(jsonFile)
+	fileByteValues, _ := ioutil.ReadAll(jsonFile)
 
-	var p Products
-
-	p = ParseJson(byteValues, &p)
+	p := ParseObject(fileByteValues)
 
 	return p
 }
 
-func ParseJson(productsJson []byte, p *Products) Products {
+func ParseObject(fileByteValues []byte) (p Products) {
 
-	if err := json.Unmarshal(productsJson, &p); err != nil {
+	if err := json.Unmarshal(fileByteValues, &p); err != nil {
 		fmt.Printf("error:%v", err)
 	}
-	return *p
+	return p
 }
 
 func helloHandler(c *gin.Context) {
@@ -56,8 +56,7 @@ func helloHandler(c *gin.Context) {
 }
 
 func GetAllHandler(c *gin.Context) {
-	p := readJsonFile()
-	c.JSON(http.StatusOK, p)
+	c.JSON(http.StatusOK, readJsonFile(FileName))
 }
 
 func main() {
@@ -91,6 +90,6 @@ func main() {
 	router := gin.Default()
 
 	router.GET("/hello", helloHandler)
-	router.GET("/", GetAllHandler)
+	router.GET("/products", GetAllHandler)
 	router.Run()
 }
