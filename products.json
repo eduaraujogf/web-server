@@ -1,6 +1,6 @@
-{ "products":[
+[
     {
-        "id":10,
+        "id":1,
         "name":"book",
         "color":"black",
         "price": 23.92,
@@ -10,7 +10,7 @@
         "createdAt":"08/02/2022"
     }, 
     {
-        "id":1,
+        "id":2,
         "name":"chair",
         "color":"brown",
         "price": 112.52,
@@ -20,7 +20,7 @@
         "createdAt":"18/05/2021"
     }, 
     {
-        "id":5,
+        "id":3,
         "name":"notebook",
         "color":"white",
         "price": 1999.0,
@@ -30,4 +30,4 @@
         "createdAt":"25/10/2020"
     }
 ]
-}
+

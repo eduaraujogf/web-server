@@ -1,58 +1,140 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"os"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 )
 
 const FileName = "products.json"
 
-type Products struct {
-	Products []Product `json:"products"`
-}
+var lastID int = 3
+var products Products = readJsonFile("./products.json")
+
+type Products []Product
+
+// type Products struct {
+// 	Products []Product `json:"products"`
+// }
+
+// type Products []Product
 type Product struct {
-	Id          uint    `json:"id"`
-	Name        string  `json:"name"`
-	Color       string  `json:"color"`
-	Price       float64 `json:"price"`
-	Stock       uint    `json:"stock"`
-	Code        string  `json:"code"`
-	IsPublished bool    `json:"isPublished"`
-	CreatedAt   string  `json:"createdAt"`
+	Id          int     `json:"id"`
+	Name        string  `json:"name" binding:"required"`
+	Color       string  `json:"color" binding:"required"`
+	Price       float64 `json:"price" binding:"required"`
+	Stock       int     `json:"stock" binding:"required"`
+	Code        string  `json:"code" binding:"required"`
+	IsPublished bool    `json:"isPublished" binding:"required"`
+	CreatedAt   string  `json:"createdAt" binding:"required"`
 }
 
-// func readJsonFile(fileName string) Products {
+func readJsonFile(fileName string) (p Products) {
 
-// 	jsonFile, err := os.Open(fileName)
-// 	if err != nil {
-// 		fmt.Println(err)
-// 	}
+	jsonFile, err := os.Open(fileName)
+	if err != nil {
+		fmt.Println(err)
+	}
 
-// 	defer jsonFile.Close()
+	defer jsonFile.Close()
 
-// 	fileByteValues, _ := ioutil.ReadAll(jsonFile)
+	fileByteValues, _ := ioutil.ReadAll(jsonFile)
 
-// 	p := ParseObject(fileByteValues)
+	p = ParseObject(fileByteValues)
 
-// 	return p
-// }
+	return p
+}
 
-// func ParseObject(fileByteValues []byte) (p Products) {
+func ParseObject(fileByteValues []byte) (p Products) {
 
-// 	if err := json.Unmarshal(fileByteValues, &p); err != nil {
-// 		fmt.Printf("error:%v", err)
-// 	}
-// 	return p
-// }
+	if err := json.Unmarshal(fileByteValues, &p); err != nil {
+		fmt.Printf("error:%v", err)
+	}
+	return p
+}
 
 func helloHandler(c *gin.Context) {
-	c.JSON(200, gin.H{
+	c.JSON(http.StatusOK, gin.H{
 		"message": "Hello, Eduardo!",
 	})
 }
 
-func GetAllHandler(c *gin.Context) {
+func GetName(c *gin.Context) {
+	name := c.Query("name")
+	if name == "" {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "name could not be empty",
+		})
+		return
+	}
+
+	// products := readJsonFile("./products.json")
+	for _, product := range products {
+
+		if product.Name == name {
+			c.JSON(http.StatusOK, gin.H{
+				"data": product,
+			})
+			return
+		}
+	}
+	c.JSON(http.StatusNotFound, gin.H{
+		"message": "product not found",
+	})
+}
+
+func GetId(c *gin.Context) {
+	id := c.Param("id")
+	convertedId, err := strconv.Atoi(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "id is not a number",
+		})
+		return
+	}
+	for _, product := range products {
+
+		if product.Id == convertedId {
+			c.JSON(http.StatusOK, gin.H{
+				"data": product,
+			})
+			return
+		}
+	}
+	c.JSON(http.StatusNotFound, gin.H{
+		"message": "product not found",
+	})
+
+}
+
+func GetAllProducts(c *gin.Context) {
 	// c.JSON(http.StatusOK, readJsonFile(FileName))
-	c.File("./products.json")
+	// c.File("./products.json")
+	c.JSON(http.StatusOK, gin.H{
+		"data": products,
+	})
+}
+
+func CreateProduct(c *gin.Context) {
+	var product Product
+	if err := c.ShouldBindJSON(&product); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	lastID++
+	product.Id = lastID
+	products = append(products, product)
+	c.JSON(http.StatusOK, gin.H{
+		"data": product,
+	})
 }
 
 func main() {
@@ -86,6 +168,13 @@ func main() {
 	router := gin.Default()
 
 	router.GET("/hello", helloHandler)
-	router.GET("/products", GetAllHandler)
+	group := router.Group("/products")
+	{
+		group.GET("/", GetAllProducts)
+		group.GET("/:id", GetId)
+		group.GET("/filter", GetName)
+		group.POST("/", CreateProduct)
+	}
+
 	router.Run()
 }
