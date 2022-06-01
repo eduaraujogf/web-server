@@ -118,3 +118,36 @@ devem ser seguidos os seguintes passos:
 permanentemente).
 3. Caso o token enviado não esteja correto, devemos retornar um erro 401 e uma
 mensagem que "você não tem permissão para fazer a solicitação solicitada".
+
+# Go Web III
+
+## Aula 1 
+
+## Exercício 1 - Gerar o método PUT
+
+É solicitado a implementação de uma funcionalidade que modifique completamente uma
+entidade. Para isso, é necessário seguir os seguintes passos:
+1. Gere um método PUT para modificar toda a entidade.
+2. No Path envie o ID da entidade a ser modificada.
+3. Se não existir, retorne um erro 404..
+4. Realize todas as validações (todos os campos são obrigatórios).
+
+Exercício 2 - Gerar o método DELETE
+É necessário implementar uma funcionalidade para excluir uma entidade. Para isso, é
+necessário seguir os seguintes passos:
+1. Gere um método DELETE para excluir a entidade com base no ID.
+2. Se não existir, retorne um erro 404..
+
+## Exercício 3 - Gerar o método PATCH
+
+É necessário implementar uma funcionalidade que modifique parcialmente a entidade,
+apenas 2 campos devem ser modificados:
+- Se Produtos for selecionado, os campos de nome e preço.
+- Se Usuários for selecionado, os campos sobrenome e idade.
+- Se Transações foi selecionado, o código da transação e os campos de valor.
+Para conseguir isso, é necessário seguir os seguintes passos:
+1. Gere um método PATCH para modificar parcialmente a entidade, modificando apenas
+2 campos (por opção).
+2. Do Path envie o ID da entidade a ser modificada.
+3. Se não existir, retorne um erro 404.
+4. Valide os 2 campos para enviados.
