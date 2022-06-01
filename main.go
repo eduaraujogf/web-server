@@ -40,6 +40,14 @@ type ErrorMsg struct {
 	Message string `json:"message"`
 }
 
+func tokenValidator(token string, c *gin.Context) bool {
+	if token != "123456" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+		return true
+	}
+	return false
+}
+
 func errorHandler(fe validator.FieldError) string {
 	return fmt.Sprintf("field %s is required", fe.Field())
 }
@@ -69,12 +77,21 @@ func ParseObject(fileByteValues []byte) (p Products) {
 }
 
 func helloHandler(c *gin.Context) {
+	token := c.Request.Header.Get("token")
+	if tokenValidator(token, c) {
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Hello, Eduardo!",
 	})
 }
 
 func GetName(c *gin.Context) {
+	token := c.Request.Header.Get("token")
+	if tokenValidator(token, c) {
+		return
+	}
 	name := c.Query("name")
 	if name == "" {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -99,6 +116,10 @@ func GetName(c *gin.Context) {
 }
 
 func GetId(c *gin.Context) {
+	token := c.Request.Header.Get("token")
+	if tokenValidator(token, c) {
+		return
+	}
 	id := c.Param("id")
 	convertedId, err := strconv.Atoi(id)
 	if err != nil {
@@ -125,12 +146,20 @@ func GetId(c *gin.Context) {
 func GetAllProducts(c *gin.Context) {
 	// c.JSON(http.StatusOK, readJsonFile(FileName))
 	// c.File("./products.json")
+	token := c.Request.Header.Get("token")
+	if tokenValidator(token, c) {
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"data": products,
 	})
 }
 
 func CreateProduct(c *gin.Context) {
+	token := c.Request.Header.Get("token")
+	if tokenValidator(token, c) {
+		return
+	}
 	var product Product
 	if err := c.ShouldBindJSON(&product); err != nil {
 		var ve validator.ValidationErrors
