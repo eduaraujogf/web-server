@@ -40,7 +40,8 @@ type ErrorMsg struct {
 	Message string `json:"message"`
 }
 
-func tokenValidator(token string, c *gin.Context) bool {
+func isValidToken(c *gin.Context) bool {
+	token := c.Request.Header.Get("token")
 	if token != "123456" {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
 		return true
@@ -77,8 +78,7 @@ func ParseObject(fileByteValues []byte) (p Products) {
 }
 
 func helloHandler(c *gin.Context) {
-	token := c.Request.Header.Get("token")
-	if tokenValidator(token, c) {
+	if isValidToken(c) {
 		return
 	}
 
@@ -88,8 +88,7 @@ func helloHandler(c *gin.Context) {
 }
 
 func GetName(c *gin.Context) {
-	token := c.Request.Header.Get("token")
-	if tokenValidator(token, c) {
+	if isValidToken(c) {
 		return
 	}
 	name := c.Query("name")
@@ -116,8 +115,7 @@ func GetName(c *gin.Context) {
 }
 
 func GetId(c *gin.Context) {
-	token := c.Request.Header.Get("token")
-	if tokenValidator(token, c) {
+	if isValidToken(c) {
 		return
 	}
 	id := c.Param("id")
@@ -146,8 +144,8 @@ func GetId(c *gin.Context) {
 func GetAllProducts(c *gin.Context) {
 	// c.JSON(http.StatusOK, readJsonFile(FileName))
 	// c.File("./products.json")
-	token := c.Request.Header.Get("token")
-	if tokenValidator(token, c) {
+
+	if isValidToken(c) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
@@ -156,8 +154,7 @@ func GetAllProducts(c *gin.Context) {
 }
 
 func CreateProduct(c *gin.Context) {
-	token := c.Request.Header.Get("token")
-	if tokenValidator(token, c) {
+	if isValidToken(c) {
 		return
 	}
 	var product Product
