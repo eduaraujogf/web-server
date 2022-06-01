@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -9,6 +10,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 const FileName = "products.json"
@@ -32,6 +34,14 @@ type Product struct {
 	Code        string  `json:"code" binding:"required"`
 	IsPublished bool    `json:"isPublished" binding:"required"`
 	CreatedAt   string  `json:"createdAt" binding:"required"`
+}
+
+type ErrorMsg struct {
+	Message string `json:"message"`
+}
+
+func errorHandler(fe validator.FieldError) string {
+	return fmt.Sprintf("field %s is required", fe.Field())
 }
 
 func readJsonFile(fileName string) (p Products) {
@@ -123,9 +133,19 @@ func GetAllProducts(c *gin.Context) {
 func CreateProduct(c *gin.Context) {
 	var product Product
 	if err := c.ShouldBindJSON(&product); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		var ve validator.ValidationErrors
+		if errors.As(err, &ve) {
+			out := make([]ErrorMsg, len(ve))
+			for i, fe := range ve {
+				out[i] = ErrorMsg{errorHandler(fe)}
+			}
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"error": out,
+			})
+		}
+		// c.JSON(http.StatusBadRequest, gin.H{
+		// 	"error": err.Error(),
+		// })
 		return
 	}
 
