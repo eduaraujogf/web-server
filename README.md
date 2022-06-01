@@ -1,5 +1,6 @@
 # Go Web I
 
+## Aula 1
 ## Exercise 1 - Structuring a JSON
 
 Depending on the chosen theme, generate a JSON that meets the following keys accordingly
@@ -57,6 +58,36 @@ correspondente.
 Se você não encontrou nenhum elemento com esse id retorne como código de resposta 404.
 
 # Go Web II
+
+## Aula 1
+
+## Exercício 1 - Criar Entidade
+A funcionalidade para criar a entidade deve ser implementada. Se isso acontecer, os
+seguintes passos devem ser seguidos:
+1. Crie um endpoint por meio de POST que receba a entidade.
+2. Você deve ter um array da entidade na memória (no nível global), no qual todas as
+requisições que são feitas devem ser salvas.
+3. No momento de fazer a solicitação, o ID deve ser gerado. Para gerar o ID, devemos
+procurar o ID do último registro gerado, incrementá-lo em 1 e atribuí-lo ao nosso novo
+registro (sem ter uma variável global do último ID).
+
+## Exercício 2 - Validação de campo
+As validações dos campos devem ser implementadas no momento do envio do pedido, para
+isso devem ser seguidos os seguintes passos:
+1. Todos os campos enviados na solicitação devem ser validados, todos os campos são
+obrigatórios
+2. Caso algum campo não esteja completo, um código de erro 400 deve ser retornado
+com a mensagem “campo %s é obrigatório”.
+(Em %s deve ir o nome do campo que não está completo).
+
+## Exercício 3 - Validar Token
+Para adicionar segurança à aplicação, o pedido deve ser enviado com um token, para isso
+devem ser seguidos os seguintes passos:
+1. No momento do envio da solicitação, deve ser validado que um token é enviado
+2. Esse token deve ser validado em nosso código (o token pode ser codificado
+permanentemente).
+3. Caso o token enviado não esteja correto, devemos retornar um erro 401 e uma
+mensagem que "você não tem permissão para fazer a solicitação solicitada".
 
 ## Aula 2
 
