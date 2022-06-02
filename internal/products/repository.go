@@ -11,7 +11,7 @@ type Repository interface {
 	Store(id, stock int, name, color, code, createdAt string, price float64, isPublished bool) (Product, error)
 	LastID() (int, error)
 	Update(id, stock int, name, color, code, createdAt string, price float64, isPublished bool) (Product, error)
-	// UpdateName(id int, name string) (Product, error)
+	UpdateNamePrice(id int, name string, price float64) (Product, error)
 	Delete(id int) error
 }
 
@@ -63,6 +63,23 @@ func (repository) Delete(id int) error {
 	}
 	ps = append(ps[:index], ps[index+1:]...)
 	return nil
+}
+
+func (repository) UpdateNamePrice(id int, name string, price float64) (Product, error) {
+	var p Product
+	updated := false
+	for i := range ps {
+		if ps[i].Id == id {
+			ps[i].Name = name
+			ps[i].Price = price
+			updated = true
+			p = ps[i]
+		}
+	}
+	if !updated {
+		return Product{}, fmt.Errorf("product with id %d not found", id)
+	}
+	return p, nil
 }
 
 func NewRepository() Repository {

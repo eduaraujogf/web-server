@@ -20,6 +20,7 @@ func main() {
 	pr.POST("/", p.Store())
 	pr.GET("/", p.GetAll())
 	pr.PUT("/:id", p.Update())
+	pr.PATCH("/:id", p.UpdateNamePrice())
 	pr.DELETE("/:id", p.Delete())
 	r.Run()
 

@@ -38,7 +38,7 @@ func errorRequest(ctx *gin.Context, err error) bool {
 	return true
 }
 
-func errorBindJson(ctx *gin.Context, req *request) bool {
+func errorBindJson(ctx *gin.Context, req any) bool {
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		if errorRequest(ctx, err) {
 			return true
@@ -159,6 +159,41 @@ func (c *ProductController) Delete() gin.HandlerFunc {
 	}
 }
 
+func (c *ProductController) UpdateNamePrice() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		if isValidToken(ctx) {
+			return
+		}
+
+		id, err := strconv.Atoi(ctx.Param("id"))
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"error": "invalid ID",
+			})
+			return
+		}
+
+		var req requestPatch
+		if errorBindJson(ctx, &req) {
+			return
+		}
+		product, err := c.service.UpdateNamePrice(id, req.Name, req.Price)
+		if err != nil {
+			ctx.JSON(http.StatusNotFound, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		ctx.JSON(http.StatusOK, gin.H{
+			"message": product,
+		})
+	}
+}
+
+type requestPatch struct {
+	Name  string  `json:"name" binding:"required"`
+	Price float64 `json:"price" binding:"required"`
+}
 type request struct {
 	Name        string  `json:"name" binding:"required"`
 	Color       string  `json:"color" binding:"required"`
