@@ -1,12 +1,19 @@
 package main
 
 import (
+	"log"
+
 	"github.com/eduaraujogf/web-server/cmd/server/controllers"
 	"github.com/eduaraujogf/web-server/internal/products"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("error to load .env")
+	}
 
 	repo := products.NewRepository()
 

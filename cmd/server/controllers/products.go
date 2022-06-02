@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/eduaraujogf/web-server/internal/products"
@@ -53,7 +54,7 @@ func errorBindJson(ctx *gin.Context, req any) bool {
 
 func isValidToken(ctx *gin.Context) bool {
 	token := ctx.Request.Header.Get("token")
-	if token != "123456" {
+	if token != os.Getenv("TOKEN") {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
 		return true
 	}
