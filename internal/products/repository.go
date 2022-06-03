@@ -1,6 +1,10 @@
 package products
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/eduaraujogf/web-server/pkg/store"
+)
 
 var ps []Product = []Product{}
 
@@ -15,24 +19,43 @@ type Repository interface {
 	Delete(id int) error
 }
 
-type repository struct{}
+type repository struct {
+	db store.Store
+}
 
-func (repository) GetAll() ([]Product, error) {
+func (r *repository) GetAll() ([]Product, error) {
+	var ps []Product
+	r.db.Read(&ps)
 	return ps, nil
 }
 
-func (repository) LastID() (int, error) {
-	return lastID, nil
+func (r *repository) LastID() (int, error) {
+	var ps []Product
+	if err := r.db.Read(&ps); err != nil {
+		return 0, err
+	}
+	if len(ps) == 0 {
+		return 0, nil
+	}
+	return ps[len(ps)-1].Id, nil
 }
 
-func (repository) Store(id, stock int, name, color, code, createdAt string, price float64, isPublished bool) (Product, error) {
+func (r *repository) Store(id, stock int, name, color, code, createdAt string, price float64, isPublished bool) (Product, error) {
+	var ps []Product
+	r.db.Read(&ps)
 	p := Product{id, name, color, price, stock, code, isPublished, createdAt}
 	ps = append(ps, p)
-	lastID = p.Id
+
+	if err := r.db.Write(ps); err != nil {
+		return Product{}, err
+	}
+
 	return p, nil
 }
 
-func (repository) Update(id, stock int, name, color, code, createdAt string, price float64, isPublished bool) (Product, error) {
+func (r *repository) Update(id, stock int, name, color, code, createdAt string, price float64, isPublished bool) (Product, error) {
+	var ps []Product
+	r.db.Read(&ps)
 	p := Product{Name: name, Color: color, Price: price, Stock: stock, Code: code, IsPublished: isPublished, CreatedAt: createdAt}
 	updated := false
 	for i := range ps {
@@ -45,11 +68,16 @@ func (repository) Update(id, stock int, name, color, code, createdAt string, pri
 	if !updated {
 		return Product{}, fmt.Errorf("product with id %d not found", id)
 	}
-	fmt.Println(p)
+	if err := r.db.Write(ps); err != nil {
+		return Product{}, err
+	}
 	return p, nil
 }
 
-func (repository) Delete(id int) error {
+func (r *repository) Delete(id int) error {
+	var ps []Product
+	r.db.Read(&ps)
+
 	deleted := false
 	var index int
 	for i := range ps {
@@ -62,11 +90,16 @@ func (repository) Delete(id int) error {
 		return fmt.Errorf("product with id %d not found", id)
 	}
 	ps = append(ps[:index], ps[index+1:]...)
+	if err := r.db.Write(ps); err != nil {
+		return err
+	}
 	return nil
 }
 
-func (repository) UpdateNamePrice(id int, name string, price float64) (Product, error) {
+func (r *repository) UpdateNamePrice(id int, name string, price float64) (Product, error) {
+	var ps []Product
 	var p Product
+	r.db.Read(&ps)
 	updated := false
 	for i := range ps {
 		if ps[i].Id == id {
@@ -79,9 +112,14 @@ func (repository) UpdateNamePrice(id int, name string, price float64) (Product, 
 	if !updated {
 		return Product{}, fmt.Errorf("product with id %d not found", id)
 	}
+	if err := r.db.Write(ps); err != nil {
+		return Product{}, err
+	}
 	return p, nil
 }
 
-func NewRepository() Repository {
-	return &repository{}
+func NewRepository(db store.Store) Repository {
+	return &repository{
+		db: db,
+	}
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/eduaraujogf/web-server/cmd/server/controllers"
 	"github.com/eduaraujogf/web-server/internal/products"
+	"github.com/eduaraujogf/web-server/pkg/store"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -14,8 +15,9 @@ func main() {
 	if err != nil {
 		log.Fatal("error to load .env")
 	}
+	db := store.New(store.FileType, "./products.json")
 
-	repo := products.NewRepository()
+	repo := products.NewRepository(db)
 
 	service := products.NewService(repo)
 

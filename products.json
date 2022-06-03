@@ -1,33 +1,32 @@
 [
-    {
-        "id":1,
-        "name":"book",
-        "color":"black",
-        "price": 23.92,
-        "stock": 32,        
-        "code":"ABC123",
-        "isPublished":true,
-        "createdAt":"08/02/2022"
-    }, 
-    {
-        "id":2,
-        "name":"chair",
-        "color":"brown",
-        "price": 112.52,
-        "stock": 15, 
-        "code":"CBD422",
-        "isPublished":false,
-        "createdAt":"18/05/2021"
-    }, 
-    {
-        "id":3,
-        "name":"notebook",
-        "color":"white",
-        "price": 1999.0,
-        "stock": 40, 
-        "code":"GBA556",
-        "isPublished":true,
-        "createdAt":"25/10/2020"
-    }
+  {
+    "id": 2,
+    "name": "chair",
+    "color": "brown",
+    "price": 112.52,
+    "stock": 15,
+    "code": "CBD422",
+    "isPublished": false,
+    "createdAt": "18/05/2021"
+  },
+  {
+    "id": 3,
+    "name": "laptop",
+    "color": "black",
+    "price": 2999.11,
+    "stock": 10,
+    "code": "ABC123",
+    "isPublished": true,
+    "createdAt": "12/10/2021"
+  },
+  {
+    "id": 4,
+    "name": "pc",
+    "color": "black",
+    "price": 444.11,
+    "stock": 10,
+    "code": "ABC123",
+    "isPublished": true,
+    "createdAt": "12/10/2021"
+  }
 ]
-
